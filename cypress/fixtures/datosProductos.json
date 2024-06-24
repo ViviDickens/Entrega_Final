@@ -1,0 +1,16 @@
+{
+    "productos": {
+      "primerProducto": {
+        "id": 1000,
+        "nombre": "Buzo Negro",
+        "precioUnitario": 23.76,
+        "quantity": 1
+      },
+      "segundoProducto": {
+        "id": 1004,
+        "nombre": "Sweater rosa",
+        "precioUnitario": 14.86,
+        "quantity": 1
+      }
+    }
+  }
