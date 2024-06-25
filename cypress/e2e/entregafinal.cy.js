@@ -48,41 +48,58 @@ describe('Prueba de compra', () => {
 
         homePage.clickOnlineShop();
 
-        expect(productosData).to.exist;
-        expect(clienteData).to.exist;
-
+        // Agregar productos al carrito
         productsPage.agregarProducto(productosData.productos.primerProducto, productosData.productos.primerProducto.quantity);
         productsPage.agregarProducto(productosData.productos.segundoProducto, productosData.productos.segundoProducto.quantity);
 
         productsPage.clickShoppingCart();
 
+        // Verificar los detalles del primer producto en el carrito
         shoppingCartPage.verificarProducto(productosData.productos.primerProducto.nombre).should('exist');
         shoppingCartPage.verificarPrecio(productosData.productos.primerProducto);
         shoppingCartPage.verificarCantidad(productosData.productos.primerProducto);
+        cy.contains(productosData.productos.primerProducto.nombre).should('be.visible');
+        cy.contains(productosData.productos.primerProducto.precioUnitario.toFixed(2)).should('be.visible');
+        cy.contains(productosData.productos.primerProducto.quantity).should('be.visible');
 
+        // Verificar los detalles del segundo producto en el carrito
         shoppingCartPage.verificarProducto(productosData.productos.segundoProducto.nombre).should('exist');
         shoppingCartPage.verificarPrecio(productosData.productos.segundoProducto);
         shoppingCartPage.verificarCantidad(productosData.productos.segundoProducto);
+        cy.contains(productosData.productos.segundoProducto.nombre).should('be.visible');
+        cy.contains(productosData.productos.segundoProducto.precioUnitario.toFixed(2)).should('be.visible');
+        cy.contains(productosData.productos.segundoProducto.quantity).should('be.visible');
 
+        // Verificar el precio total de los productos
         onlineShopPage.clickOnShowTotalPrice();
 
         const totalPrice = (productosData.productos.primerProducto.precioUnitario * productosData.productos.primerProducto.quantity) +
                            (productosData.productos.segundoProducto.precioUnitario * productosData.productos.segundoProducto.quantity);
 
         shoppingCartPage.verificarPrecioTotal(totalPrice);
+        cy.contains(totalPrice.toFixed(2)).should('be.visible');
 
+        // Ir a la página de checkout
         cy.get('[data-cy="goBillingSummary"]').click();
         cy.get('[data-cy="goCheckout"]').click();
 
+        // Completar el formulario de checkout
         checkoutPage.typeName(clienteData.cliente.name);
         checkoutPage.typeLastname(clienteData.cliente.lastname);
         checkoutPage.typeCardNumber(clienteData.cliente.cardNumber);  
         checkoutPage.clickPurchase();
 
+        // Verificar los datos en el ticket de compra
         cy.get(reciptPage.name).should('contain.text', `${clienteData.cliente.name} ${clienteData.cliente.lastname}`);
         cy.get(reciptPage.creditCard).should('contain.text', clienteData.cliente.cardNumber);
         cy.get(reciptPage.totalPrice).should('contain.text', totalPrice.toFixed(2));
 
-        reciptPage.clickThankYouButton(); 
+      
+        cy.get(reciptPage.name).should('be.visible');
+        cy.get(reciptPage.creditCard).should('be.visible');
+        cy.get(reciptPage.totalPrice).should('be.visible');
+
+
+        reciptPage.ClickthankyouButton();
     });
 });
